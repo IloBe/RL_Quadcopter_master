@@ -23,7 +23,7 @@ source activate quadcop
 additional comments:
 
 ipykernel must be added to the _conda_ command above <br>
-only _activate quadcop_ works fine, not the original mentioned code !
+only _activate quadcop_ works fine, not the original mentioned code starting with source!
 
 3. Create an [IPython kernel](http://ipython.readthedocs.io/en/stable/install/kernel_install.html) for the `quadcop` environment. Be sure ipykernel is installed.
 ```
@@ -38,3 +38,9 @@ jupyter notebook Quadcopter_Project.ipynb
 5. Before running code, change the kernel to match the `quadcop` environment by using the drop-down menu (**Kernel > Change kernel > quadcop**). Then, follow the instructions in the notebook.
 
 6. You will likely need to install more pip packages to complete this project.  Please curate the list of packages needed to run your project in the `requirements.txt` file in the repository.
+
+## License
+This miniproject coding is released under the [MIT Licence](https://github.com/IloBe/RL_Quadcopter_master/edit/master/License).
+
+## Software Architecture Details
+For the given project as reinforcement learning concept the actor-critic method is chosen. Its architecture is explained more detailed [here](https://github.com/IloBe/RL_Quadcopter_master/edit/master/RL_architecture_info.pdf).
