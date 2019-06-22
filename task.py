@@ -2,10 +2,15 @@ import numpy as np
 from physics_sim import PhysicsSim
 
 class Task():
-    """Task (environment) that defines the goal and provides feedback to the agent."""
+    """
+    Task (environment) that defines the goal and provides feedback to the agent.
+    
+    Note: 
+    toDo: create a subclass TakeOff_task for this project to get the proper reward including penalty handling
+    """
     def __init__(self, init_pose=None, init_velocities=None, 
         init_angle_velocities=None, runtime=5., target_pos=None):
-        """Initialize a Task object.
+        """ Initialize a Task object.
         Params
         ======
             init_pose: initial position of the quadcopter in (x,y,z) dimensions and the Euler angles
@@ -26,10 +31,49 @@ class Task():
         # Goal
         self.target_pos = target_pos if target_pos is not None else np.array([0., 0., 10.]) 
 
+        
+    def get_TakeOff_reward(self):
+        """ 
+        for TakeOff_task: 
+        the device shall start from the ground and reach a target height.
+        
+        Function creates the reward and 
+        cheques end of episode if target height position z is reached;
+        regarding penalties:
+        - in general the take-off process should happen only a specific amount of time,
+          this is not taken into account, so, no penalty created for that
+        - additionally changing the positions often because of drift issue
+          should lead to penalty as well, but is not taken into account either
+        """
+        #done = false
+        # the device agent has reached the target height, means take-off is finished,
+        # and bonus reward is given to the existing value only during that process
+        if self.sim.pose[2] > self.target_pos[2]:
+            reward = -20.0
+            #done = True
+        else:
+            reward = 30.0
+            #done = False
+            
+        # penalty situation: agent runs out of time for take-off process
+        # toDo: situation could be handled with specific TakeOff_task subclass
+        #if timestamp > self.max_duration: 
+            #reward = -20.0 
+            #done = True
+            
+        # penalty situation: drift behaviour let the device be flying unstable           
+        
+        return reward
+
     def get_reward(self):
         """Uses current pose of sim to return reward."""
         reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        
+        if self.name == "take-off":
+            reward = self.get_TakeOff_reward()
+        
         return reward
+
 
     def step(self, rotor_speeds):
         """Uses action to obtain next state, reward, done."""
