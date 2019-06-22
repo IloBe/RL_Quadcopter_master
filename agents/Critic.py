@@ -1,9 +1,10 @@
 from keras import backend as K
-from keras import optimizers, layers, models
+from keras import layers, models
+from keras.optimizers import Adam
 
 class Critic:
     """
-    Critic class initialises parameters and
+    Critic (value) class initialises parameters and
     builds models with Keras (see documentation on https://keras.io/);
     the models input state-action pairs are mapped to output Q-values.
     """
@@ -13,14 +14,13 @@ class Critic:
         self.model_name = name
         self.critic_learning_rate = beta
         self.state_size = state_size    # integer - state space
-        self.action_size = action_size  # integer - action space
-        
-        self.model = _build_model()
+        self.action_size = action_size  # integer - action space      
+        self.build_model()
        
     
-    def _build_model():
+    def build_model(self):
         """ 
-        Creates critic network for mapping state-action pairs to Q-values. 
+        Creates critic (value) network for mapping state-action pairs to Q-values. 
         
         Because as input state-action pairs are necessary,
         compared to the Actor class here the other Model creation process is used.
@@ -31,7 +31,7 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
         
         # Hidden layers for states
-        net_states = layers.Dense(units=32)
+        net_states = layers.Dense(units=32)(states)
         net_states = layers.BatchNormalization()(net_states)
         net_states = layers.Activation(activation='relu')(net_states)
         net_states = layers.Dropout(rate=0.3)(net_states)
@@ -45,7 +45,7 @@ class Critic:
         net_states = layers.Dropout(rate=0.5)(net_states)
             
         # Hidden layers for actions
-        net_actions = layers.Dense(units=32)
+        net_actions = layers.Dense(units=32)(actions)
         net_actions = layers.BatchNormalization()(net_actions)
         net_actions = layers.Activation(activation='relu')(net_actions)
         net_actions = layers.Dropout(rate=0.3)(net_actions)
@@ -63,24 +63,27 @@ class Critic:
         net = layers.Activation(activation='relu')(net)
             
         # Final output layer for Q-values
-        Q_vals = layers.Dense(units=1, name='q_vals')(net)
+        q_vals = layers.Dense(units=1, name='q_vals')(net)
             
         # Create model
-        model = models.Model(inputs=[states, actions], outputs=Q_vals)
+        self.model = models.Model(inputs=[states, actions], outputs=q_vals)
+        
+        # print model information
+        print("\n--- Critic ---")
+        print("\n--- Build model summary of {}: ---".format(self.model_name))
+        self.model.summary()
           
         # Learning configuration: compile with Adam optimiser and mean squared error as loss function
-        model.compile(optimizer=optimizers.Adam(lr=self.critic_learning_rate), loss='mse')
+        self.model.compile(optimizer=Adam(lr=self.critic_learning_rate), loss='mse')
             
-        # Compute action gradients (derivative of Q values with respect to actions)
-        action_grads = K.gradients(Q_vals, actions)
+        # Compute action gradients (derivative of q values with respect to actions)
+        action_grads = K.gradients(q_vals, actions)
             
         # With Keras backend concept create function to get action gradients to be used by actor model
         self.get_action_gradients = K.function(inputs=[*self.model.input, K.learning_phase()],
                                                outputs=action_grads)
-        
-        return model
     
     
-    def get_model():
+    def get_model(self):
         return self.model
     
