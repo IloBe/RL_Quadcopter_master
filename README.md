@@ -18,14 +18,12 @@ cd RL-Quadcopter-2
 ```
 conda create -n quadcop python=3.6 matplotlib numpy pandas ipykernel keras
 ```
+
 additional comments for activation
 
  - on e.g. DOS shell:
     - To activate this environment, use:<br>
       activate quadcop
-
-    - To deactivate an active environment, use:<br>
-      deactivate
 
  - for power-users using bash, you must source
 
@@ -44,7 +42,7 @@ jupyter notebook Quadcopter_Project.ipynb
 6. You will likely need to install more pip packages to complete this project.  Please curate the list of packages needed to run your project in the `requirements.txt` file in the repository.
 
 ## License
-This miniproject coding is released under the [MIT Licence](https://github.com/IloBe/RL_Quadcopter_master/edit/master/License).
+This project coding is released under the [MIT Licence](https://github.com/IloBe/RL_Quadcopter_master/edit/master/License).
 
 ## Software Architecture Details
 For the given project as reinforcement learning concept the actor-critic method is chosen. Its architecture together with general Reinforcement Learning and domain information is explained more detailed [here](https://github.com/IloBe/RL_Quadcopter_master/edit/master/RL_architecture_info.pdf) for this project topic.
