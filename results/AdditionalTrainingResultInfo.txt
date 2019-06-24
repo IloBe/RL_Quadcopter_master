@@ -1,2 +1,140 @@
 ## Information about Training Settings and Results
 
+I.
+First status of reward function:
+only + and - values
+
+
+1. Test
+default DDPG agent config,
+init_velocities [0., 0., 0.]
+
+# training result:
+---  Take-off: Total Rewards dataframe ---
+reward maximum: total_reward    5760.0
+dtype: float64
+its index: total_reward    354
+dtype: int64
+
+# the pose, velocity, and angular velocity at the end of the training
+[-0.69380902  0.4572356   0.          1.04192269  2.48791047  0.        ]
+[ -2.62977211  -1.00999628 -15.16310467]
+[ 12.60598012 -20.84439091   0.        ]
+
+
+2. Test
+default DDPG agent config,
+init_velocities [0., 0., 10.]
+
+# training result:
+---  Take-off: Total Rewards dataframe ---
+reward maximum: total_reward    7560.0
+dtype: float64
+its index: total_reward    297
+dtype: int64
+
+# the pose, velocity, and angular velocity at the end of the training
+[0.91598494 0.00937632 0.         5.48344634 5.9622333  0.        ]
+[  0.626073    -0.37974606 -16.96395453]
+[-3.57419544 26.7280407   0.        ]
+
+
+3. Test
+modified DDPG agent config,
+init_velocities [0., 0., 10.]
+
+    # from agent initialisation:
+    #    - alpha: actor learning rate
+    #    - beta: critic learning rate
+    #    - gamma: discount value, for termination function: final state with gamma(s)=0
+    #    - tau: used for smooth shifting from the local prediction models to the target models (soft update of targets)
+    #    - mu, theta, sigma: for creation of Ornstein-Uhlenbeck noise instance, part of exploration policy creation
+    #    - max_size: memory buffer size
+    params = {'alpha' : 0.0001,
+              'beta'  : 0.001,
+              'gamma' : 0.99,  # first try default: 0.9, second: 0.99
+              'tau'   : 0.01,  # first try default: 0.125, second: 0.01, third: 0.001
+              'mu'    : 0.2,
+              'theta' : 0.15,
+              'sigma' : 0.2,
+              'max_size' : 100000}
+
+# training result:
+---  Take-off: Total Rewards dataframe ---
+reward maximum: total_reward    7560.0
+dtype: float64
+its index: total_reward    384
+dtype: int64
+
+# the pose, velocity, and angular velocity at the end of the training
+[0.29823497 5.65505474 0.         3.10941527 1.89464971 0.        ]
+[  1.27402787   3.00262297 -18.81295255]
+[ -2.10717511 -28.81750005   0.        ]
+
+
+4. Test
+same as 3. Test but with episodes = 2000 instead of 1000 as before
+
+# training result:
+---  Take-off: Total Rewards dataframe ---
+reward maximum: total_reward    7560.0
+dtype: float64
+its index: total_reward    555
+dtype: int64
+
+# the pose, velocity, and angular velocity at the end of the training
+[-1.01988681 -5.21630428  0.          4.20123406  1.29937361  0.        ]
+[  0.02266549  -2.66709354 -19.00411142]
+[-6.34804621 28.84031775  0.        ]
+
+
+5. Test
+reward changed only with velocity change ...
+velocity [0., 0., 20.] config nearly the same as before (epiodes=1000 instead of 2000, gamma=0.9 instead of 0.99)
+
+# training result:
+---  Take-off: Total Rewards dataframe ---
+reward maximum: total_reward    2420.0
+dtype: float64
+its index: total_reward    89
+dtype: int64
+
+# the pose, velocity, and angular velocity at the end of the training
+[-16.25893052  -5.14760791   0.           0.35219967   1.86350821
+   0.        ]
+[ -4.75535969  -2.21072829 -27.96863521]
+[28.83224003 17.82120249  0.        ]
+
+
+
+II.
+Second status of reward function:
++ and - values with proportional velocity value
+
+1. Test
+init_velocities = np.array([0., 0., 10.])
+target_pos = np.array([0., 0., 30.])
+params = {'alpha' : 0.0001,
+              'beta'  : 0.001,
+              'gamma' : 0.9,
+              'tau'   : 0.01,
+              'mu'    : 0.3,
+              'theta' : 0.15,
+              'sigma' : 0.3,
+              'max_size' : 100000}
+
+# training result:
+---  Take-off: Total Rewards dataframe ---
+reward maximum: total_reward    19859.383777
+dtype: float64
+its index: total_reward    283
+dtype: int64
+
+# the pose, velocity, and angular velocity at the end of the training
+[-10.60563991 -55.98351995  43.11136514   3.56002129   2.08841222
+   0.        ]
+[ -0.80110269 -20.41945122   3.00123015]
+[ 28.83635134 -28.84189478   0.        ]
+
+
+==> this last configuration is the final one of the project
