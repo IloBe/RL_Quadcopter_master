@@ -35,25 +35,25 @@ class Task():
     def get_TakeOff_reward(self):
         """ 
         for TakeOff_task: 
-        the device shall start from the ground and reach a target height.
+        the device shall start from the ground and reach a given target height (z value).
         
         Function creates the reward and 
-        cheques end of episode if target height position z is reached;
+        cheques if target height position z is reached;
         regarding penalties:
         - in general the take-off process should happen only a specific amount of time,
           this is not taken into account, so, no penalty created for that
         - additionally changing the positions often because of drift issue
           should lead to penalty as well, but is not taken into account either
         """
-        #done = false
         # the device agent has reached the target height, means take-off is finished,
-        # and bonus reward is given to the existing value only during that process
+        # and bonus reward is given to the existing value only during that process;
+        # because velocity is important for having a stable flight, it is included
+        # self.sim.v is used because self.sim.init_velocities can be none
+        # because we are interested in the z position, the psi velocity is relevant
         if self.sim.pose[2] > self.target_pos[2]:
-            reward = -20.0
-            #done = True
+            reward = -20.0 * 1/3 * self.sim.v[2]
         else:
-            reward = 30.0
-            #done = False
+            reward = 30.0 * 2/3 * self.sim.v[2]
             
         # penalty situation: agent runs out of time for take-off process
         # toDo: situation could be handled with specific TakeOff_task subclass
